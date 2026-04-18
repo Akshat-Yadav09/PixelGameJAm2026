@@ -4,6 +4,8 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Turret Room visibility")]
+    [SerializeField] private CanvasGroup turretRoomGroup;
     // Singleton
     public static GameManager Instance;
 
@@ -21,6 +23,16 @@ public class GameManager : MonoBehaviour
     // Turret Variables
     [SerializeField] private GameObject turretPrefab;
     [SerializeField] private int turretCost = 10;
+    private int turretCount = 0;
+
+    // Turret Grid Spawning
+    [SerializeField] private Vector3 turretStartPos;
+    [SerializeField] private float xSpacing = 2f;
+    [SerializeField] private int turretsPerRow = 5;
+
+    // UI Screens
+    [SerializeField] private GameObject shopMenuScreen;
+    [SerializeField] private GameObject turretScreen;
 
     // Upgrade limit tracking
     private int upgradeCount = 0;
@@ -43,6 +55,31 @@ public class GameManager : MonoBehaviour
             visionButtonText.text = "Upgrade Vision (" + upgradeCost + " Scrap)";
         if (turretButtonText != null)
             turretButtonText.text = "Buy Turret (" + turretCost + " Scrap)";
+    }
+
+    // --- UI Menu ---
+public void OpenShop()
+    {
+        if (shopMenuScreen != null) shopMenuScreen.SetActive(true);
+        Time.timeScale = 0f; // Pause the game
+    }
+
+    public void CloseShop()
+    {
+        if (shopMenuScreen != null) shopMenuScreen.SetActive(false);
+        Time.timeScale = 1f; // Resume the game
+    }
+
+    void Update()
+    {
+        // Toggle the shop open/closed with Tab
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (shopMenuScreen != null && shopMenuScreen.activeSelf)
+                CloseShop();
+            else
+                OpenShop();
+        }
     }
 
     public void AddScrap(int amount)
@@ -113,7 +150,7 @@ public class GameManager : MonoBehaviour
 
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
 
             // Cubic ease-out: snappy start, smooth finish
@@ -129,21 +166,40 @@ public class GameManager : MonoBehaviour
         isAnimating = false;
     }
 
-    public void BuyAutoTurret()
+   public void BuyAutoTurret()
     {
         if (currentScrap >= turretCost)
         {
             currentScrap -= turretCost;
-
-            // Spawn the turret
-            Instantiate(turretPrefab, Vector3.zero, Quaternion.identity);
-
-            turretCost += 15;
-
+            
+            // THE FIX: Add "false" to the end! 
+            // This forces the UI element to stay inside the menu properly.
+            GameObject newTurret = Instantiate(turretPrefab, turretScreen.transform, false);
+            
+            // Failsafe: Force the scale back to normal just in case the prefab got warped!
+            newTurret.transform.localScale = Vector3.one;
+            
+            turretCost += 15; 
+            
             if (turretButtonText != null)
+            {
                 turretButtonText.text = "Buy Turret (" + turretCost + " Scrap)";
-
+            }
+            
             UpdateUI();
         }
+    }
+    public void OpenTurretRoom()
+    {
+        turretRoomGroup.alpha = 1f; // Make it fully visible
+        turretRoomGroup.blocksRaycasts = true; // Make buttons clickable
+        turretRoomGroup.interactable = true;
+    }
+
+    public void CloseTurretRoom()
+    {
+        turretRoomGroup.alpha = 0f; // Make it completely invisible
+        turretRoomGroup.blocksRaycasts = false; // Stop invisible buttons from being clicked
+        turretRoomGroup.interactable = false;
     }
 }

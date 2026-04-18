@@ -2,43 +2,48 @@ using UnityEngine;
 
 public class AutoTurret : MonoBehaviour
 {
+    [Header("Turret Room visibility")]
+    [SerializeField] private CanvasGroup turretRoomGroup;
+    
     [Header("Passive Income")]
-    [SerializeField] private float generationRate = 2f; // Generates money every 2 seconds
-    [SerializeField] private int scrapPerCycle = 1;     // How much it generates
+    [SerializeField] private float generationRate = 2f; 
+    [SerializeField] private int scrapPerCycle = 1;     
     private float nextGenerationTime;
 
-    [Header("Visuals (Optional)")]
-    [SerializeField] private Transform turretSprite; // Drag your child sprite here!
-    [SerializeField] [Range(1.1f, 2f)] private float pulseSize = 1.3f; // How big it gets when it generates scrap
+    [Header("Visuals")]
+    [SerializeField] private Transform turretSprite; 
+    [SerializeField] [Range(1.1f, 2f)] private float pulseSize = 1.3f; 
     [SerializeField] [Range(1f, 10f)] private float recoverySpeed = 5f;
+
+    void Start()
+    {
+        // Start the timer the moment it spawns using the real-world clock
+        nextGenerationTime = Time.unscaledTime + generationRate;
+    }
 
     void Update()
     {
-        // 1. Smoothly shrink the sprite back to its normal size (1, 1, 1) every frame
+        // 1. Shrink back to normal size using UNSCALED time so it animates while paused
         if (turretSprite != null)
         {
-            turretSprite.localScale = Vector3.Lerp(turretSprite.localScale, Vector3.one, Time.deltaTime * recoverySpeed);
+            turretSprite.localScale = Vector3.Lerp(turretSprite.localScale, Vector3.one, Time.unscaledDeltaTime * recoverySpeed);
         }
 
-        // 2. The Passive Timer
-        if (Time.time >= nextGenerationTime)
+        // 2. The Passive Timer using UNSCALED time
+        if (Time.unscaledTime >= nextGenerationTime)
         {
             GeneratePassiveScrap();
-            
-            // Reset the timer
-            nextGenerationTime = Time.time + generationRate;
+            nextGenerationTime = Time.unscaledTime + generationRate;
         }
     }
 
     void GeneratePassiveScrap()
     {
-        // Add the money!
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddScrap(scrapPerCycle);
         }
 
-        // Create the "Pulse" visual effect by instantly making the sprite bigger
         if (turretSprite != null)
         {
             turretSprite.localScale = new Vector3(pulseSize, pulseSize, 1f);
