@@ -168,22 +168,30 @@ public void OpenShop()
 
    public void BuyAutoTurret()
     {
+        const int MaxTurrets = 14;
+
+        if (turretCount >= MaxTurrets)
+        {
+            Debug.Log("Max turrets reached!");
+            return;
+        }
+
         if (currentScrap >= turretCost)
         {
             currentScrap -= turretCost;
             
-            // THE FIX: Add "false" to the end! 
-            // This forces the UI element to stay inside the menu properly.
             GameObject newTurret = Instantiate(turretPrefab, turretScreen.transform, false);
-            
-            // Failsafe: Force the scale back to normal just in case the prefab got warped!
             newTurret.transform.localScale = Vector3.one;
-            
-            turretCost += 15; 
+
+            turretCount++;
+            turretCost = Mathf.RoundToInt(turretCost * costScaleFactor);
             
             if (turretButtonText != null)
             {
-                turretButtonText.text = "Buy Turret (" + turretCost + " Scrap)";
+                if (turretCount >= MaxTurrets)
+                    turretButtonText.text = "Turrets MAXED!";
+                else
+                    turretButtonText.text = "Buy Turret (" + turretCost + " Scrap)";
             }
             
             UpdateUI();

@@ -93,3 +93,4 @@ MonoBehaviour:
   turretSprite: {fileID: 7434839268906677891}
   pulseSize: 1.3
   recoverySpeed: 5
+  floatingTextPrefab: {fileID: 6805413126241565899, guid: 4d98d9093a2b2b515b9cb52109bc5e08, type: 3}

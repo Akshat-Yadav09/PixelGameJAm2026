@@ -1387,6 +1387,7 @@ GameObject:
   m_Component:
   - component: {fileID: 809173242}
   - component: {fileID: 809173241}
+  - component: {fileID: 809173243}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1439,6 +1440,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &809173243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 809173240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285018346eb7d5c7b9a9231edfc6fdbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestSpawner
+  floatingTextPrefab: {fileID: 6805413126241565899, guid: 4d98d9093a2b2b515b9cb52109bc5e08, type: 3}
+  mainCanvas: {fileID: 1124282209}
 --- !u!1 &1124282206
 GameObject:
   m_ObjectHideFlags: 0
